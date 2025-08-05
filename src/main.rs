@@ -33,7 +33,7 @@ pub struct Lighting {
 }
 
 impl Lighting {
-    fn illuminate(&self, camera: &Camera, p: Vector3, object: &Box<dyn Sdf>) -> Vector3 {
+    fn illuminate(&self, camera: &Camera, p: Vector3, object: &dyn Sdf) -> Vector3 {
         let mut ip = Vector3::default();
 
         let n = object.surface_normal(p);
@@ -114,7 +114,7 @@ fn main() {
         let frame_time = draw(&mut draw_handle, 90., &camera, &lighting, &scene);
 
         draw_handle.draw_text(
-            &format!("Frame time: {0:#?}", frame_time),
+            &format!("Frame time: {frame_time:#?}"),
             14,
             ACTUAL_VIEWPORT - (14 * 2),
             14,
@@ -153,10 +153,8 @@ fn draw(
     let to_draw = pixels
         .par_iter()
         .map(|(x, y)| {
-            let x = *x;
-            let y = *y;
-            let x_normalized = (x as f32 + 0.5) / (RENDER_VIEWPORT as f32) * 2.0 - 1.0;
-            let y_normalized = (y as f32 + 0.5) / (RENDER_VIEWPORT as f32) * 2.0 - 1.0;
+            let x_normalized = (*x as f32 + 0.5) / (RENDER_VIEWPORT as f32) * 2.0 - 1.0;
+            let y_normalized = (*y as f32 + 0.5) / (RENDER_VIEWPORT as f32) * 2.0 - 1.0;
 
             let pixel_camera_space =
                 Vector3::new(x_normalized * ratio * scale, y_normalized * scale, 1.); // forward
@@ -232,6 +230,10 @@ fn check_movement(camera: &mut Camera, rl: &RaylibHandle) {
     }
 
     // Pan
-    if key!(KeyboardKey::KEY_Q) {}
-    if key!(KeyboardKey::KEY_E) {}
+    if key!(KeyboardKey::KEY_Q) {
+        camera.target.x -= 0.1;
+    }
+    if key!(KeyboardKey::KEY_E) {
+        camera.target.x += 0.1;
+    }
 }

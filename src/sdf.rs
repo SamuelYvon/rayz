@@ -7,7 +7,7 @@ const EPSILON: f32 = 0.0001;
 
 pub type SdfId = usize;
 
-pub trait Sdf : Sync {
+pub trait Sdf: Sync {
     fn id(&self) -> SdfId;
 
     fn sdf(&self, v: Vector3) -> f32;
@@ -95,8 +95,8 @@ impl Scene {
         Self { objects }
     }
 
-    pub fn get_object(&self, id: SdfId) -> &Box<dyn Sdf> {
-        self.objects.get(&id).unwrap()
+    pub fn get_object(&self, id: SdfId) -> &dyn Sdf {
+        self.objects.get(&id).unwrap().as_ref()
     }
 
     /// Ray-march until something is reached. Returns the point where the ray has it
